@@ -98,7 +98,7 @@ If PowerShell blocks it with an execution policy error, run this first:
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-Or if you want to do it manually, here's the two-step version -- all in the same PowerShell window:
+Or if you want to do it manually, here's the two-step version (all in the same PowerShell window):
 
 ```powershell
 # step 1: export logs to a csv
