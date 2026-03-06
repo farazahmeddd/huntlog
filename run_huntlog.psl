@@ -1,0 +1,22 @@
+# run_huntlog.ps1
+# does everything in one shot
+# exports Security logs then runs huntlog
+# run this from PowerShell as admin:
+#   .\run_huntlog.ps1
+
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$csvPath   = Join-Path $scriptDir "security.csv"
+
+Write-Host "exporting Security event log..." -ForegroundColor Cyan
+
+Get-WinEvent -LogName Security -MaxEvents 5000 | ForEach-Object {
+    "$($_.TimeCreated.ToString('yyyy-MM-ddTHH:mm:ss')),$($_.Id),$($_.Properties[5].Value),$($_.Properties[18].Value),$($_.Properties[8].Value)"
+} | Out-File $csvPath -Encoding utf8
+
+Write-Host "saved to $csvPath" -ForegroundColor Green
+Write-Host "running huntlog..." -ForegroundColor Cyan
+
+python "$scriptDir\huntlog.py" --file $csvPath --log-type windows
+
+# optional: uncomment to also export findings as JSON
+# python "$scriptDir\huntlog.py" --file $csvPath --log-type windows --export "$scriptDir\findings.json"
